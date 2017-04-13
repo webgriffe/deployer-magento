@@ -1,0 +1,13 @@
+{
+    "name": "webgriffe/deployer-magento",
+    "description": "Deployer recipe for Magento project",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Webgriffe Srl",
+            "email": "support@webgriffe.com"
+        }
+    ],
+    "require": {}
+}
