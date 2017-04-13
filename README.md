@@ -8,7 +8,7 @@ Install
 
 Install it using Composer:
 
-	$ composer require webgriffe/deployer-recipe dev-master
+	$ composer require --dev webgriffe/deployer-recipe dev-master
 	
 Usage
 -----
