@@ -1,6 +1,8 @@
 <?php
 
 namespace Deployer;
+use Deployer\Task\Context;
+
 require 'recipe/common.php';
 
 set('magento_root_path', function () {
@@ -30,8 +32,8 @@ set(
 );
 
 // Tasks
-desc('Run the setup scripts');
-task('deploy:setup', function () {
+desc('Run the Magento setup scripts');
+task('magento:setup-run', function () {
     run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run');
 });
 
@@ -54,6 +56,52 @@ task('magento:db-pull', function () {
     runLocally('cd {{magento_root_path}} && n98-magerun.phar db:import -n -c gz ' . $localDump);
 });
 
+desc('Pull Magento media to local');
+task('magento:media-pull', function () {
+    $serverConfig = Context::get()->getServer()->getConfiguration();
+    $sshOptions = [
+        '-A',
+        '-o UserKnownHostsFile=/dev/null',
+        '-o StrictHostKeyChecking=no'
+    ];
+
+    if (\Deployer\get('ssh_multiplexing', false)) {
+        $this->initMultiplexing();
+        $sshOptions = array_merge($sshOptions, $this->getMultiplexingSshOptions());
+    }
+
+    $username = $serverConfig->getUser() ? $serverConfig->getUser() : null;
+    if (!empty($username)) {
+        $username .= '@';
+    }
+    $hostname = $serverConfig->getHost();
+
+    if ($serverConfig->getConfigFile()) {
+        $sshOptions[] = '-F ' . escapeshellarg($serverConfig->getConfigFile());
+    }
+
+    if ($serverConfig->getPort()) {
+        $sshOptions[] = '-p ' . escapeshellarg($serverConfig->getPort());
+    }
+
+    if ($serverConfig->getPrivateKey()) {
+        $sshOptions[] = '-i ' . escapeshellarg($serverConfig->getPrivateKey());
+    } elseif ($serverConfig->getPemFile()) {
+        $sshOptions[] = '-i ' . escapeshellarg($serverConfig->getPemFile());
+    }
+
+    if ($serverConfig->getPty()) {
+        $sshOptions[] = '-t';
+    }
+
+    $sshCommand = 'ssh ' . implode(' ', $sshOptions);
+    $remotePath = '{{current_path}}/{{magento_root_path}}/media/';
+
+    runLocally(
+        'cd {{magento_root_path}} && '.
+        'rsync -arvuzi -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/');
+});
+
 desc('Deploy Magento Project');
 task('deploy', [
     'deploy:prepare',
@@ -63,9 +111,24 @@ task('deploy', [
     'deploy:shared',
     'deploy:vendors',
     'deploy:clear_paths',
-    'deploy:setup',
+    'magento:setup-run',
     'deploy:symlink',
     'magento:clear-cache',
+    'deploy:unlock',
+    'cleanup',
+    'success'
+]);
+
+desc('First Deploy for Magento Project (no Clear Cache and Setup Upgrades)');
+task('magento:first-deploy', [
+    'deploy:prepare',
+    'deploy:lock',
+    'deploy:release',
+    'deploy:update_code',
+    'deploy:shared',
+    'deploy:vendors',
+    'deploy:clear_paths',
+    'deploy:symlink',
     'deploy:unlock',
     'cleanup',
     'success'
