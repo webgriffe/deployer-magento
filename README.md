@@ -27,10 +27,10 @@ set('magento_root', 'magento');
 // ... usual Deployer configuration
 ```
 
-Database tasks
------------------
+Magento useful tasks
+--------------------
 
-This recipe provides useful database tasks:
+This recipe provides Magento useful tasks:
 
 * `magento:db-dump`: creates a gzipped database dump on the remote stage in the deploy user's home directory
 * `magento:db-pull`: pulls database from the remote stage to local environment
