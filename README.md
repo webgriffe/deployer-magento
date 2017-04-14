@@ -34,6 +34,7 @@ This recipe provides useful database tasks:
 
 * `magento:db-dump`: creates a gzipped database dump on the remote stage in the deploy user's home directory
 * `magento:db-pull`: pulls database from the remote stage to local environment
+* `magento:media-pull`: pulls Magento media from the remote stage to local environment
 
 License
 -------
