@@ -49,7 +49,8 @@ task('magento:db-dump', function () {
 
 desc('Pull Magento database to local');
 task('magento:db-pull', function () {
-    $remoteDump = '/tmp/tmp.sql.gz';
+    $fileName = uniqid('dbdump_');
+    $remoteDump = "/tmp/{$fileName}.sql.gz";
     run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar db:dump -n -c gz ' . $remoteDump);
     $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
     download($localDump, $remoteDump);
