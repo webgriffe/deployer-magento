@@ -54,7 +54,7 @@ task('magento:db-pull', function () {
     run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar db:dump -n -c gz ' . $remoteDump);
     $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
     download($localDump, $remoteDump);
-    runLocally('cd {{magento_root_path}} && n98-magerun.phar db:import -n -c gz ' . $localDump);
+    runLocally('cd ./{{magento_root_path}} && n98-magerun.phar db:import -n -c gz ' . $localDump);
 });
 
 desc('Pull Magento media to local');
@@ -99,7 +99,7 @@ task('magento:media-pull', function () {
     $remotePath = '{{current_path}}/{{magento_root_path}}/media/';
 
     runLocally(
-        'cd {{magento_root_path}} && '.
+        'cd ./{{magento_root_path}} && '.
         'rsync -arvuzi -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/');
 });
 
