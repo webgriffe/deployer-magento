@@ -103,6 +103,11 @@ task('magento:media-pull', function () {
         'rsync -arvuzi -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/');
 });
 
+desc('Set "copy" as Magento deploy strategy');
+task('magento:set-copy-deploy-strategy', function(){
+    run('cd {{release_path}} && {{bin/composer}} config extra.magento-deploystrategy copy');
+});
+
 desc('Deploy Magento Project');
 task('deploy', [
     'deploy:prepare',
@@ -110,6 +115,7 @@ task('deploy', [
     'deploy:release',
     'deploy:update_code',
     'deploy:shared',
+    'magento:set-copy-deploy-strategy',
     'deploy:vendors',
     'deploy:clear_paths',
     'magento:setup-run',
@@ -127,6 +133,7 @@ task('magento:first-deploy', [
     'deploy:release',
     'deploy:update_code',
     'deploy:shared',
+    'magento:set-copy-deploy-strategy',
     'deploy:vendors',
     'deploy:clear_paths',
     'deploy:symlink',
