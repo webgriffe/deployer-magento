@@ -55,6 +55,7 @@ task('magento:db-pull', function () {
     $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
     download($localDump, $remoteDump);
     runLocally('cd ./{{magento_root_path}} && n98-magerun.phar db:import -n -c gz ' . $localDump);
+    runLocally('cd ./{{magento_root_path}} && n98-magerun.phar cache:disable');
 });
 
 desc('Pull Magento media to local');
