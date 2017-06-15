@@ -107,6 +107,7 @@ task('magento:media-pull', function () {
 desc('Set "copy" as Magento deploy strategy');
 task('magento:set-copy-deploy-strategy', function(){
     run('cd {{release_path}} && {{bin/composer}} config extra.magento-deploystrategy copy');
+    run('cd {{release_path}} && {{bin/composer}} config extra.magento-force true');
 });
 
 desc('Deploy Magento Project');
