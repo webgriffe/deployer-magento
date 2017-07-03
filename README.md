@@ -35,6 +35,12 @@ This recipe provides Magento useful tasks:
 * `magento:db-dump`: creates a gzipped database dump on the remote stage in the deploy user's home directory
 * `magento:db-pull`: pulls database from the remote stage to local environment
 * `magento:media-pull`: pulls Magento media from the remote stage to local environment
+* `magento:set-copy-deploy-strategy`: sets the "copy" deploy strategy for [Magento Composer Installer](https://github.com/Cotya/magento-composer-installer) into the composer.json file.
+
+Full Deploy
+-----------
+
+This recipe overwrites the default `deploy` task to add specific Magento related task. It also adds the `magento:first-deploy` task which is useful when depoying a project for the first time (when Magento is not installed).
 
 License
 -------
