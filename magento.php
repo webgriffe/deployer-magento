@@ -19,6 +19,9 @@ set('shared_files', ['{{magento_root_path}}' . 'app/etc/local.xml', '{{magento_r
 // Magento writable dirs
 set('writable_dirs', ['{{magento_root_path}}' . 'var', '{{magento_root_path}}' . 'media']);
 
+// Magento media pull exclude dirs (paths must be relative to the media dir)
+set('media_pull_exclude_dirs', ['css', 'js']);
+
 // Magento clear paths
 set(
     'clear_paths',
@@ -99,9 +102,15 @@ task('magento:media-pull', function () {
     $sshCommand = 'ssh ' . implode(' ', $sshOptions);
     $remotePath = '{{current_path}}/{{magento_root_path}}/media/';
 
+    $excludeDirs = array_map(function($dir) {
+        return '--exclude '.$dir;
+    }, get('media_pull_exclude_dirs'));
+    $excludeDirsParameter = implode(' ', $excludeDirs);
+
     runLocally(
         'cd ./{{magento_root_path}} && '.
-        'rsync -arvuzi -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/');
+        'rsync -arvuzi '.$excludeDirsParameter.' -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/'
+    );
 });
 
 desc('Set "copy" as Magento deploy strategy');

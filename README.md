@@ -35,6 +35,11 @@ This recipe provides Magento useful tasks:
 * `magento:db-dump`: creates a gzipped database dump on the remote stage in the deploy user's home directory
 * `magento:db-pull`: pulls database from the remote stage to local environment
 * `magento:media-pull`: pulls Magento media from the remote stage to local environment
+  * With the `media_pull_exclude_dirs` environment variable it's possible to specify which sub-directories of the media dir you want to exclude. The `js` and `css` directories are excluded by default. Usage example:
+    
+    ```php
+    add('media_pull_exclude_dirs', ['wysiwyg']);
+    ```
 * `magento:set-copy-deploy-strategy`: sets the "copy" deploy strategy for [Magento Composer Installer](https://github.com/Cotya/magento-composer-installer) into the composer.json file.
 
 Full Deploy
