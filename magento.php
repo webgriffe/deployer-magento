@@ -2,6 +2,7 @@
 
 namespace Deployer;
 use Deployer\Task\Context;
+use Symfony\Component\Console\Input\InputOption;
 
 require 'recipe/common.php';
 
@@ -61,6 +62,12 @@ task('magento:db-pull', function () {
     runLocally('cd ./{{magento_root_path}} && n98-magerun.phar cache:disable');
 });
 
+option(
+    'media-pull-timeout',
+    null,
+    InputOption::VALUE_OPTIONAL,
+    'Timeout for media-pull task in seconds (default is 300s)'
+);
 desc('Pull Magento media to local');
 task('magento:media-pull', function () {
     $serverConfig = Context::get()->getServer()->getConfiguration();
@@ -107,9 +114,15 @@ task('magento:media-pull', function () {
     }, get('media_pull_exclude_dirs'));
     $excludeDirsParameter = implode(' ', $excludeDirs);
 
+    $timeout = 300;
+    if (input()->hasOption('media-pull-timeout')) {
+        $timeout = input()->getOption('media-pull-timeout');
+    }
+
     runLocally(
         'cd ./{{magento_root_path}} && '.
-        'rsync -arvuzi '.$excludeDirsParameter.' -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/'
+        'rsync -arvuzi '.$excludeDirsParameter.' -e "'.$sshCommand.'" '.$username . $hostname.':'.$remotePath.' media/',
+        $timeout
     );
 });
 
