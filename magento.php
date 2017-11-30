@@ -21,7 +21,7 @@ set('shared_files', ['{{magento_root_path}}' . 'app/etc/local.xml', '{{magento_r
 set('writable_dirs', ['{{magento_root_path}}' . 'var', '{{magento_root_path}}' . 'media']);
 
 // Magento media pull exclude dirs (paths must be relative to the media dir)
-set('media_pull_exclude_dirs', ['css', 'js']);
+set('media_pull_exclude_dirs', ['css', 'css_secure', 'js']);
 
 // Magento clear paths
 set(
