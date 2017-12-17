@@ -8,7 +8,7 @@ require 'recipe/common.php';
 
 set('magento_root_path', function () {
     $magentoRoot = get('magento_root');
-    return empty($magentoRoot) ? '' : (rtrim($magentoRoot, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);   
+    return empty($magentoRoot) ? '' : (rtrim($magentoRoot, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
 });
 
 // Magento shared dirs
@@ -38,29 +38,29 @@ set(
 // Tasks
 desc('Run the Magento setup scripts');
 task('magento:setup-run', function () {
-    run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run');
+    run('cd {{release_path}} && vendor/bin/n98-magerun --root-dir={{magento_root_path}} sys:setup:run');
 });
 
 desc('Clear Magento cache');
 task('magento:clear-cache', function () {
-    run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar cache:clean');
+    run('cd {{current_path}} && vendor/bin/n98-magerun --root-dir={{magento_root_path}} cache:clean');
 });
 
 desc('Create Magento database dump');
 task('magento:db-dump', function () {
-    run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar db:dump -n -c gz ~');
+    run('cd {{current_path}} && vendor/bin/n98-magerun --root-dir={{magento_root_path}} db:dump -n -c gz ~');
 });
 
 desc('Pull Magento database to local');
 task('magento:db-pull', function () {
     $fileName = uniqid('dbdump_');
     $remoteDump = "/tmp/{$fileName}.sql.gz";
-    run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar db:dump -n -c gz ' . $remoteDump);
+    run('cd {{current_path}} && vendor/bin/n98-magerun --root-dir={{magento_root_path}} db:dump -n -c gz ' . $remoteDump);
     $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
     download($localDump, $remoteDump);
     run('rm ' . $remoteDump);
-    runLocally('cd ./{{magento_root_path}} && n98-magerun.phar db:import -n -c gz ' . $localDump);
-    runLocally('cd ./{{magento_root_path}} && n98-magerun.phar cache:disable');
+    runLocally('cd . && vendor/bin/n98-magerun --root-dir={{magento_root_path}} db:import -n -c gz ' . $localDump);
+    runLocally('cd . && vendor/bin/n98-magerun --root-dir={{magento_root_path}} cache:disable');
     runLocally('rm ' . $localDump);
 });
 

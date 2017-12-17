@@ -9,5 +9,7 @@
             "email": "support@webgriffe.com"
         }
     ],
-    "require": {}
+    "require": {
+        "n98/magerun": "^1.100"
+    }
 }
