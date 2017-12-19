@@ -42,11 +42,6 @@ This recipe provides Magento useful tasks:
     ```
 * `magento:set-copy-deploy-strategy`: sets the "copy" deploy strategy for [Magento Composer Installer](https://github.com/Cotya/magento-composer-installer) into the composer.json file.
 
-Full Deploy
------------
-
-This recipe overwrites the default `deploy` task to add specific Magento related task. It also adds the `magento:first-deploy` task which is useful when depoying a project for the first time (when Magento is not installed).
-
 License
 -------
 

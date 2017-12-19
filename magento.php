@@ -38,12 +38,24 @@ set(
 // Tasks
 desc('Run the Magento setup scripts');
 task('magento:setup-run', function () {
-    run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run');
+    $command = [
+        'cd {{release_path}}/{{magento_root_path}}',
+        'test -f app/etc/local.xml',
+        'cat app/etc/local.xml | grep -q "<date>"',
+        'n98-magerun.phar sys:setup:run'
+    ];
+    run(implode(' && ', $command));
 });
 
 desc('Clear Magento cache');
 task('magento:clear-cache', function () {
-    run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar cache:clean');
+    $command = [
+        'cd {{release_path}}/{{magento_root_path}}',
+        'test -f app/etc/local.xml',
+        'cat app/etc/local.xml | grep -q "<date>"',
+        'n98-magerun.phar cache:clean'
+    ];
+    run(implode(' && ', $command));
 });
 
 desc('Create Magento database dump');
@@ -134,36 +146,6 @@ task('magento:set-copy-deploy-strategy', function(){
     run('cd {{release_path}} && {{bin/composer}} config extra.magento-force true');
 });
 
-desc('Deploy Magento Project');
-task('deploy', [
-    'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:shared',
-    'magento:set-copy-deploy-strategy',
-    'deploy:vendors',
-    'deploy:clear_paths',
-    'magento:setup-run',
-    'deploy:symlink',
-    'magento:clear-cache',
-    'deploy:unlock',
-    'cleanup',
-    'success'
-]);
-
-desc('First Deploy for Magento Project (no Clear Cache and Setup Upgrades)');
-task('magento:first-deploy', [
-    'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:shared',
-    'magento:set-copy-deploy-strategy',
-    'deploy:vendors',
-    'deploy:clear_paths',
-    'deploy:symlink',
-    'deploy:unlock',
-    'cleanup',
-    'success'
-]);
+after('deploy:shared', 'magento:set-copy-deploy-strategy');
+before('deploy:symlink', 'magento:setup-run');
+after('deploy:symlink', 'magento:clear-cache');
