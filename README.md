@@ -8,7 +8,7 @@ Install
 
 Install it using Composer:
 
-	$ composer require --dev webgriffe/deployer-magento dev-master
+	$ composer require --dev webgriffe/deployer-magento
 	
 Usage
 -----
