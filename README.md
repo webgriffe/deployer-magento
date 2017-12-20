@@ -1,7 +1,7 @@
 Magento 1.x Deployer Recipe
 ===========================
 
-Deployer recipe for Magento project.
+Deployer recipe for Magento project. It requires Deployer greater or equal to version `5.0`.
 
 Install
 -------
