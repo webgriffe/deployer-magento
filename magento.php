@@ -73,7 +73,10 @@ task('magento:db-pull', function () {
     $fileName = uniqid('dbdump_');
     $stripTables = implode(' ', get('db_pull_strip_tables'));
     $remoteDump = "/tmp/{$fileName}.sql.gz";
-    run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump);
+    run(
+        'cd {{current_path}}/{{magento_root_path}} && ' .
+        'n98-magerun.phar db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump
+    );
     $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
     download($remoteDump, $localDump);
     run('rm ' . $remoteDump);
