@@ -10,7 +10,7 @@ require 'recipe/common.php';
 
 set('magento_root_path', function () {
     $magentoRoot = get('magento_root');
-    return empty($magentoRoot) ? '' : (rtrim($magentoRoot, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);   
+    return empty($magentoRoot) ? '' : (rtrim($magentoRoot, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
 });
 
 // Magento shared dirs
@@ -43,24 +43,22 @@ set('db_pull_strip_tables', ['@stripped']);
 // Tasks
 desc('Run the Magento setup scripts');
 task('magento:setup-run', function () {
-    $command = [
-        'cd {{release_path}}/{{magento_root_path}}',
-        'test -f app/etc/local.xml',
-        'cat app/etc/local.xml | grep -q "<date>"',
-        'n98-magerun.phar sys:setup:run'
-    ];
-    run(implode(' && ', $command));
+    if (test('[ -f {{release_path}}/{{magento_root_path}}app/etc/local.xml ]')) {
+        $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep -q "<date>"; true');
+        if ($installed) {
+            run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run');
+        }
+    }
 });
 
 desc('Clear Magento cache');
 task('magento:clear-cache', function () {
-    $command = [
-        'cd {{release_path}}/{{magento_root_path}}',
-        'test -f app/etc/local.xml',
-        'cat app/etc/local.xml | grep -q "<date>"',
-        'n98-magerun.phar cache:clean'
-    ];
-    run(implode(' && ', $command));
+    if (test('[ -f {{release_path}}/{{magento_root_path}}app/etc/local.xml ]')) {
+        $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep -q "<date>"; true');
+        if ($installed) {
+            run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar cache:clean');
+        }
+    }
 });
 
 desc('Create Magento database dump');
