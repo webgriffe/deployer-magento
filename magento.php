@@ -44,7 +44,7 @@ set('db_pull_strip_tables', ['@stripped']);
 desc('Run the Magento setup scripts');
 task('magento:setup-run', function () {
     if (test('[ -f {{release_path}}/{{magento_root_path}}app/etc/local.xml ]')) {
-        $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep -q "<date>"; true');
+        $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep "<date>"; true');
         if ($installed) {
             run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run');
         }
@@ -54,7 +54,7 @@ task('magento:setup-run', function () {
 desc('Clear Magento cache');
 task('magento:clear-cache', function () {
     if (test('[ -f {{release_path}}/{{magento_root_path}}app/etc/local.xml ]')) {
-        $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep -q "<date>"; true');
+        $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep "<date>"; true');
         if ($installed) {
             run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar cache:clean');
         }
