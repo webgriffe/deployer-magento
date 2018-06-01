@@ -46,7 +46,11 @@ task('magento:setup-run', function () {
     if (test('[ -f {{release_path}}/{{magento_root_path}}app/etc/local.xml ]')) {
         $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep "<date>"; true');
         if ($installed) {
-            run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run');
+            $timeout = 300;
+            if (get('setup-run-timeout')) {
+                $timeout = get('setup-run-timeout');
+            }
+            run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run', ['timeout' => $timeout]);
         }
     }
 });
