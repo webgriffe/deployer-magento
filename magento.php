@@ -37,6 +37,9 @@ set(
     ]
 );
 
+// Setup run timeout
+set('setup-run-timeout', false);
+
 // DB pull strip tables
 set('db_pull_strip_tables', ['@stripped']);
 
