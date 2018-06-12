@@ -43,6 +43,10 @@ set('setup-run-timeout', 300);
 // DB pull strip tables
 set('db_pull_strip_tables', ['@stripped']);
 
+// Local/remote magerun path
+set('magerun_remote', 'n98-magerun.phar');
+set('magerun_local', getenv('DEPLOYER_MAGERUN_LOCAL') ?: 'n98-magerun.phar');
+
 // Tasks
 desc('Run the Magento setup scripts');
 task('magento:setup-run', function () {
@@ -50,7 +54,7 @@ task('magento:setup-run', function () {
         $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep "<date>"; true');
         if ($installed) {
             run(
-                'cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar sys:setup:run',
+                'cd {{release_path}}/{{magento_root_path}} && {{magerun_remote}} sys:setup:run',
                 ['timeout' => get('setup-run-timeout')]
             );
         }
@@ -62,14 +66,14 @@ task('magento:clear-cache', function () {
     if (test('[ -f {{release_path}}/{{magento_root_path}}app/etc/local.xml ]')) {
         $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep "<date>"; true');
         if ($installed) {
-            run('cd {{release_path}}/{{magento_root_path}} && n98-magerun.phar cache:clean');
+            run('cd {{release_path}}/{{magento_root_path}} && {{magerun_remote}} cache:clean');
         }
     }
 });
 
 desc('Create Magento database dump');
 task('magento:db-dump', function () {
-    run('cd {{current_path}}/{{magento_root_path}} && n98-magerun.phar db:dump -n -c gz ~');
+    run('cd {{current_path}}/{{magento_root_path}} && {{magerun_remote}} db:dump -n -c gz ~');
 });
 
 desc('Pull Magento database to local');
@@ -79,13 +83,13 @@ task('magento:db-pull', function () {
     $remoteDump = "/tmp/{$fileName}.sql.gz";
     run(
         'cd {{current_path}}/{{magento_root_path}} && ' .
-        'n98-magerun.phar db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump
+        '{{magerun_remote}} db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump
     );
     $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
     download($remoteDump, $localDump);
     run('rm ' . $remoteDump);
-    runLocally('cd ./{{magento_root_path}} && n98-magerun.phar db:import -n --drop-tables -c gz ' . $localDump);
-    runLocally('cd ./{{magento_root_path}} && n98-magerun.phar cache:disable');
+    runLocally('cd ./{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables -c gz ' . $localDump);
+    runLocally('cd ./{{magento_root_path}} && {{magerun_local}} cache:disable');
     runLocally('rm ' . $localDump);
 });
 
