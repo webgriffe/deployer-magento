@@ -21,11 +21,16 @@ namespace Deployer;
 
 require __DIR__ . '/vendor/webgriffe/deployer-magento/magento.php';
 
+// Usual Deployer configuration here
+
 // Set magento root directory inside release path (leave blank if Magento is in the root of the release path)
 set('magento_root', 'magento');
-
-// ... usual Deployer configuration
+// Set other Magento's specific config (see below)
 ```
+
+Caution
+-------
+Please, refer to the `magento.php` file to check the provided shared directories and files. Make sure that these don't conflict with your project. Even when you upgrade `webgriffe/deployer-magento` please check the shared stuff. We do not treat a different shared configuration as a BC break.
 
 Configuration
 -------------

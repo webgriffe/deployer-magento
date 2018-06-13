@@ -23,7 +23,10 @@ set(
 set('shared_files', ['{{magento_root_path}}' . 'app/etc/local.xml', '{{magento_root_path}}' . '.htaccess']);
 
 // Magento writable dirs
-set('writable_dirs', ['{{magento_root_path}}' . 'var', '{{magento_root_path}}' . 'media']);
+set(
+    'writable_dirs',
+    ['{{magento_root_path}}' . 'var', '{{magento_root_path}}' . 'media', '{{magento_root_path}}' . 'sitemaps']
+);
 
 // Magento media pull exclude dirs (paths must be relative to the media dir)
 set('media_pull_exclude_dirs', ['css', 'css_secure', 'js']);
