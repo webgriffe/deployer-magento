@@ -14,7 +14,10 @@ set('magento_root_path', function () {
 });
 
 // Magento shared dirs
-set('shared_dirs', ['{{magento_root_path}}' . 'var', '{{magento_root_path}}' . 'media']);
+set(
+    'shared_dirs',
+    ['{{magento_root_path}}' . 'var', '{{magento_root_path}}' . 'media', '{{magento_root_path}}' . 'sitemaps']
+);
 
 // Magento shared files
 set('shared_files', ['{{magento_root_path}}' . 'app/etc/local.xml', '{{magento_root_path}}' . '.htaccess']);
