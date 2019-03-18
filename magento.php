@@ -91,12 +91,15 @@ task('magento:db-pull', function () {
         'cd {{current_path}}/{{magento_root_path}} && ' .
         '{{magerun_remote}} db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump
     );
-    $localDump =  tempnam(sys_get_temp_dir(), 'deployer_') . '.sql.gz';
-    download($remoteDump, $localDump);
+    $dumpName = tempnam(sys_get_temp_dir(), 'deployer_');
+    $localDumpGz =  $dumpName . '.sql.gz';
+    $localDumpSql =  $dumpName . '.sql';
+    download($remoteDump, $localDumpGz);
     run('rm ' . $remoteDump);
-    runLocally('cd ./{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables -c gz ' . $localDump);
+    runLocally('gunzip ' . $localDumpGz);
+    runLocally('cd ./{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables --optimize ' . $localDumpSql);
     runLocally('cd ./{{magento_root_path}} && {{magerun_local}} cache:disable');
-    runLocally('rm ' . $localDump);
+    runLocally('rm ' . $localDumpSql);
 });
 
 option(
