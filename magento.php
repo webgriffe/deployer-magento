@@ -29,7 +29,7 @@ set(
 );
 
 // Magento media pull exclude dirs (paths must be relative to the media dir)
-set('media_pull_exclude_dirs', ['css', 'css_secure', 'js']);
+set('media_pull_exclude_dirs', ['css', 'css_secure', 'js', 'catalog/product/cache']);
 
 // Magento clear paths
 set(
