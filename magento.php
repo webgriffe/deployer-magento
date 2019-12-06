@@ -60,7 +60,7 @@ task('magento:setup-run', function () {
         $installed = run('cat {{release_path}}/{{magento_root_path}}app/etc/local.xml | grep "<date>"; true');
         if ($installed) {
             run(
-                'cd {{release_path}}/{{magento_root_path}} && {{magerun_remote}} sys:setup:run',
+                'cd {{release_path}}/{{magento_root_path}} && {{magerun_remote}} sys:setup:run --no-implicit-cache-flush',
                 ['timeout' => get('setup-run-timeout')]
             );
         }
