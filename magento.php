@@ -82,14 +82,26 @@ task('magento:db-dump', function () {
     run('cd {{current_path}}/{{magento_root_path}} && {{magerun_remote}} db:dump -n -c gz ~');
 });
 
+option(
+    'db-pull-timeout',
+    null,
+    InputOption::VALUE_OPTIONAL,
+    'Timeout for db:dump and db:import executions in db-pull task in seconds (default is 300s)'
+);
 desc('Pull Magento database to local');
 task('magento:db-pull', function () {
+    $timeout = 300;
+    if (input()->hasOption('db-pull-timeout')) {
+        $timeout = input()->getOption('db-pull-timeout');
+    }
+
     $fileName = uniqid('dbdump_');
     $stripTables = implode(' ', get('db_pull_strip_tables'));
     $remoteDump = "/tmp/{$fileName}.sql.gz";
     run(
         'cd {{current_path}}/{{magento_root_path}} && ' .
-        '{{magerun_remote}} db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump
+        '{{magerun_remote}} db:dump -n --strip="'. $stripTables .'" -c gz ' . $remoteDump,
+        ['timeout' => $timeout]
     );
     $dumpName = tempnam(sys_get_temp_dir(), 'deployer_');
     $localDumpGz =  $dumpName . '.sql.gz';
@@ -97,7 +109,11 @@ task('magento:db-pull', function () {
     download($remoteDump, $localDumpGz);
     run('rm ' . $remoteDump);
     runLocally('gunzip ' . $localDumpGz);
-    runLocally('cd ./{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables --optimize ' . $localDumpSql);
+    runLocally(
+        'cd ./{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables --optimize ' . $localDumpSql,
+        ['timeout' => $timeout]
+    );
+
     runLocally('cd ./{{magento_root_path}} && {{magerun_local}} cache:disable');
     runLocally('rm ' . $localDumpSql);
 });
