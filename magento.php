@@ -53,6 +53,10 @@ set('db_pull_strip_tables', ['@stripped']);
 set('magerun_remote', 'n98-magerun.phar');
 set('magerun_local', getenv('DEPLOYER_MAGERUN_LOCAL') ?: 'n98-magerun.phar');
 
+set('local_project_path', function () {
+    return runLocally('pwd');
+});
+
 // Tasks
 desc('Run the Magento setup scripts');
 task('magento:setup-run', function () {
@@ -110,11 +114,11 @@ task('magento:db-pull', function () {
     run('rm ' . $remoteDump);
     runLocally('gunzip ' . $localDumpGz);
     runLocally(
-        'cd ./{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables --optimize ' . $localDumpSql,
+        'cd {{local_project_path}}/{{magento_root_path}} && {{magerun_local}} db:import -n --drop-tables --optimize ' . $localDumpSql,
         ['timeout' => $timeout]
     );
 
-    runLocally('cd ./{{magento_root_path}} && {{magerun_local}} cache:disable');
+    runLocally('cd {{local_project_path}}/{{magento_root_path}} && {{magerun_local}} cache:disable');
     runLocally('rm ' . $localDumpSql);
 });
 
@@ -127,7 +131,7 @@ option(
 desc('Pull Magento media to local');
 task('magento:media-pull', function () {
     $remotePath = '{{current_path}}/{{magento_root_path}}/media/';
-    $localPath = './{{magento_root_path}}/media/';
+    $localPath = '{{local_project_path}}/{{magento_root_path}}/media/';
 
     $excludeDirs = array_map(function($dir) {
         return '--exclude '.$dir;
